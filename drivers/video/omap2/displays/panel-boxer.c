@@ -42,13 +42,13 @@ static struct spi_device *boxer_spi;
 static struct omap_video_timings boxer_panel_timings = {
 	.x_res          = 1024,
 	.y_res          = 600,
-	.pixel_clock    = 86400, /* in kHz */
-	.hfp            = 70,
-	.hsw            = 40,
-	.hbp            = 200,
-	.vfp            = 10,
-	.vsw            = 10,
-	.vbp            = 11,
+	.pixel_clock    = 72000, /* in kHz */
+	.hfp            = 48,
+	.hsw            = 48,
+	.hbp            = 130,
+	.vfp            = 8,
+	.vsw            = 20,
+	.vbp            = 12,
 };
 
 struct panel_config {
