@@ -715,7 +715,7 @@ static int compact_node(int nid, bool sync)
 }
 
 /* Compact all nodes in the system */
-static void compact_nodes(bool sync)
+void compact_nodes(bool sync)
 {
 	int nid;
 
