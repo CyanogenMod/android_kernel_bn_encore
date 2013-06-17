@@ -54,7 +54,7 @@
 #define WILINK_UART_DEV_NAME            "/dev/ttyO1"
 
 #ifdef CONFIG_OMAP_RAM_CONSOLE
-#define ENCORE_RAM_CONSOLE_START	PLAT_PHYS_OFFSET + 0xE000000
+#define ENCORE_RAM_CONSOLE_START	(PLAT_PHYS_OFFSET + 0xE000000)
 /* XXX: size is ridiculously large, but system won't boot with smaller */
 #define ENCORE_RAM_CONSOLE_SIZE		SZ_1M
 #endif
