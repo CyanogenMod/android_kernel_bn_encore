@@ -180,7 +180,7 @@ dsscomp_t dsscomp_new(struct omap_overlay_manager *mgr)
 	comp->ovl_mask = comp->ovl_dmask = 0;
 	comp->frm.sync_id = 0;
 	if (cpu_is_omap3630())
-		comp->frm.mgr.ix = display_ix < 2 ? 0 : 1;
+		comp->frm.mgr.ix = 0;
 	else
 		comp->frm.mgr.ix = display_ix;
 
