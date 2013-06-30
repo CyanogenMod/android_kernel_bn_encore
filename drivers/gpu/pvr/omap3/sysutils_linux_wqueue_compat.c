@@ -54,12 +54,6 @@
 #define SGX_PARENT_CLOCK "core_ck"
 #endif
 
-extern struct platform_device *gpsPVRLDMDev;
-#if defined(SGX530) && (SGX_CORE_REV == 125)
-#define OMAP_MEMORY_BUS_CLOCK_MAX 800000
-#else
-#define OMAP_MEMORY_BUS_CLOCK_MAX 664000
-#endif
 static IMG_VOID PowerLockWrap(SYS_SPECIFIC_DATA *psSysSpecData)
 {
 	if (!in_interrupt())
@@ -212,10 +206,6 @@ PVRSRV_ERROR EnableSGXClocks(SYS_DATA *psSysData)
 	}
 #endif
 
-#if defined(SYS_OMAP3430_PIN_MEMORY_BUS_CLOCK)
-	omap_pm_set_min_bus_tput(&gpsPVRLDMDev->dev, OCP_INITIATOR_AGENT, OMAP_MEMORY_BUS_CLOCK_MAX);
-#endif
-
 
 	atomic_set(&psSysSpecData->sSGXClocksEnabled, 1);
 
@@ -247,10 +237,6 @@ IMG_VOID DisableSGXClocks(SYS_DATA *psSysData)
 	{
 		clk_disable(psSysSpecData->psSGX_FCK);
 	}
-
-#if defined(SYS_OMAP3430_PIN_MEMORY_BUS_CLOCK)
-	omap_pm_set_min_bus_tput(&gpsPVRLDMDev->dev, OCP_INITIATOR_AGENT, 0);
-#endif
 
 	atomic_set(&psSysSpecData->sSGXClocksEnabled, 0);
 

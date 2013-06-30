@@ -63,6 +63,49 @@ static PVRSRV_DEVICE_NODE *gpsSGXDevNode;
 static IMG_CPU_VIRTADDR gsSGXRegsCPUVAddr;
 #endif
 
+#ifdef SYS_OMAP3430_PIN_MEMORY_BUS_CLOCK
+extern struct platform_device *gpsPVRLDMDev;
+#if defined(SGX530) && (SGX_CORE_REV == 125)
+#define OMAP_MEMORY_BUS_BANDWIDTH_MAX 800000
+#else
+#define OMAP_MEMORY_BUS_BANDWIDTH_MAX 664000
+#endif
+
+static bool sgx_pin_core_clk = false;
+
+static ssize_t pin_core_clk_show(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	return scnprintf(buf, PAGE_SIZE, "%d\n", sgx_pin_core_clk);
+}
+
+static ssize_t pin_core_clk_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	bool pin_core_clk;
+	if (strtobool(buf, &pin_core_clk))
+		return -EINVAL;
+
+	if (pin_core_clk == sgx_pin_core_clk)
+		return count;
+
+	if (pin_core_clk)
+		omap_pm_set_min_bus_tput(&gpsPVRLDMDev->dev,
+				OCP_INITIATOR_AGENT,
+				OMAP_MEMORY_BUS_BANDWIDTH_MAX);
+	else
+		omap_pm_set_min_bus_tput(&gpsPVRLDMDev->dev,
+				OCP_INITIATOR_AGENT, -1);
+
+	sgx_pin_core_clk = pin_core_clk;
+	return count;
+}
+
+static DEVICE_ATTR(pin_core_clk, S_IRUGO | S_IWUSR,
+		pin_core_clk_show, pin_core_clk_store);
+static bool dev_attr_pin_core_clk_registered = false;
+#endif
+
 IMG_UINT32 PVRSRV_BridgeDispatchKM(IMG_UINT32	Ioctl,
 								   IMG_BYTE		*pInBuf,
 								   IMG_UINT32	InBufLen,
@@ -532,6 +575,13 @@ PVRSRV_ERROR SysInitialise(IMG_VOID)
 	}
 #endif
 
+#ifdef SYS_OMAP3430_PIN_MEMORY_BUS_CLOCK
+	i = device_create_file(&gpsPVRLDMDev->dev, &dev_attr_pin_core_clk);
+	if (i)
+		PVR_DPF((PVR_DBG_ERROR,"SysInitialise: Failed to initialise device!"));
+	else
+		dev_attr_pin_core_clk_registered = true;
+#endif
 
 	return PVRSRV_OK;
 }
@@ -684,6 +734,13 @@ PVRSRV_ERROR SysDeinitialise (SYS_DATA *psSysData)
 	}
 #endif
 
+#ifdef SYS_OMAP3430_PIN_MEMORY_BUS_CLOCK
+	if (dev_attr_pin_core_clk_registered)
+	{
+		device_remove_file(&gpsPVRLDMDev->dev, &dev_attr_pin_core_clk);
+		dev_attr_pin_core_clk_registered = false;
+	}
+#endif
 
 	gpsSysSpecificData->ui32SysSpecificData = 0;
 	gpsSysSpecificData->bSGXInitComplete = IMG_FALSE;
