@@ -286,6 +286,8 @@ static int hdpvr_start_streaming(struct hdpvr_device *dev)
 		
 		dev->status = STATUS_STREAMING;
 
+		dev->status = STATUS_STREAMING;
+
 		INIT_WORK(&dev->worker, hdpvr_transmit_buffers);
 		queue_work(dev->workqueue, &dev->worker);
 

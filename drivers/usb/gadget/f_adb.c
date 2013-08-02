@@ -422,6 +422,7 @@ static int adb_open(struct inode *ip, struct file *fp)
 	/* clear the error latch */
 	_adb_dev->error = 0;
 	android_adb_open=0;
+
 	adb_ready_callback();
 
 	return 0;
