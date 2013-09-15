@@ -21,6 +21,7 @@
 #include <linux/delay.h>
 
 #include <video/omapdss.h>
+#include <video/omap-panel-boxer.h>
 #include <plat/mcspi.h>
 #include <plat/omap-pm.h>
 #include <plat/board.h>
@@ -32,10 +33,6 @@
 #define LCD_BACKLIGHT_EN_EVT2           47
 
 #define DEFAULT_BACKLIGHT_BRIGHTNESS    105
-
-struct boxer_panel_data {
-	struct regulator *vlcd;
-};
 
 static void boxer_backlight_set_power(struct omap_pwm_led_platform_data *self, int on_off)
 {
@@ -105,6 +102,46 @@ static struct omap_dss_device evt_lcd_device = {
 	.phy.dpi.data_lines = 24,
 	.channel = OMAP_DSS_CHANNEL_LCD,
 	.data = &boxer_panel,
+	.panel = {
+		.config = OMAP_DSS_LCD_TFT | OMAP_DSS_LCD_IVS |
+			  OMAP_DSS_LCD_IHS | OMAP_DSS_LCD_IPC,
+		.width_in_um = 153000,
+		.height_in_um = 90000,
+		/*
+		 * Panel timing information.
+		 *
+		 * Each tick of the pixel clock can convey information about
+		 * one pixel.  To separate individual lines and frames, though,
+		 * we need to add quiet periods in between, and to make it easy
+		 * to find the beginning of a line, we stick a sync pulse in
+		 * the middle of the silence.  The quiet period before the sync
+		 * pulse is the "front porch", and the one after it is the
+		 * "back porch".
+		 *
+		 * Effectively, then,
+		 *
+		 * (pixel clock in Hz) =
+		 * (x_res+hfp+hsw+hbp) * (y_res+vfp+vsw+vbp) * (refresh rate)
+		 *
+		 * In other words, the specific values for sync pulse widths
+		 * and front/back porches, along with the desired resolution
+		 * and pixel clock, determine the refresh rate of the screen.
+		 *
+		 * See http://en.wikipedia.org/wiki/Analog_television#Structure_of_a_video_signal
+		 * for more information.
+		 */
+		.timings = {
+			.x_res		= 1024,
+			.y_res		= 600,
+			.pixel_clock	= 72000, /* in kHz */
+			.hfp		= 48,	/* horiz. "front porch" */
+			.hsw		= 48,	/* horiz. sync pulse width */
+			.hbp		= 130,	/* horiz. "back porch" */
+			.vfp		= 8,	/* vert. "front porch" */
+			.vsw		= 20,	/* vert. sync pulse width */
+			.vbp		= 12,	/* vert. "back porch" */
+		},
+	},
 };
 
 static struct omap_dss_device *evt_dss_devices[] = {
