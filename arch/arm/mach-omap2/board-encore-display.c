@@ -81,18 +81,6 @@ static void __init boxer_backlight_init(void)
         gpio_set_value(LCD_CABC1_GPIO,0);
 }
 
-static int encore_panel_enable_lcd(struct omap_dss_device *dssdev)
-{
-	boxer_backlight_set_power(NULL, 1);
-
-	return 0;
-}
-
-static void encore_panel_disable_lcd(struct omap_dss_device *dssdev)
-{
-	boxer_backlight_set_power(NULL, 0);
-}
-
 static struct boxer_panel_data boxer_panel;
 
 static struct omap_dss_device evt_lcd_device = {
@@ -178,4 +166,3 @@ void __init encore_display_init(void)
         omap_display_init(&evt_dss_data);
 
 }
-
