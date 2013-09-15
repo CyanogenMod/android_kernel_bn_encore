@@ -29,39 +29,13 @@
 #include <asm/mach-types.h>
 
 #include <video/omapdss.h>
+#include <video/omap-panel-boxer.h>
 
 /* Delay between Panel configuration and Panel enabling */
 #define LCD_RST_DELAY		100
 #define LCD_INIT_DELAY		200
 
-struct boxer_panel_data {
-	struct regulator *vlcd;
-};
-
 static struct spi_device *boxer_spi;
-static struct omap_video_timings boxer_panel_timings = {
-	.x_res          = 1024,
-	.y_res          = 600,
-	.pixel_clock    = 72000, /* in kHz */
-	.hfp            = 48,
-	.hsw            = 48,
-	.hbp            = 130,
-	.vfp            = 8,
-	.vsw            = 20,
-	.vbp            = 12,
-};
-
-struct panel_config {
-	u32 width_in_um;
-	u32 height_in_um;
-};
-
-static struct panel_config panel_configs[] = {
-	{
-		.width_in_um = 153000,
-		.height_in_um = 90000,
-	}
-};
 
 /* Get FT i2c adapter for lock/unlock it */
 struct i2c_adapter *g_ft_i2c_adapter = NULL;
@@ -135,7 +109,6 @@ static void boxer_init_panel(void)
 static int boxer_panel_probe(struct omap_dss_device *dssdev)
 {
 	int ret = 0;
-	struct panel_config *panel_config = NULL;
 	struct boxer_panel_data *panel_data = get_panel_data(dssdev);
 
 	panel_data->vlcd = regulator_get(NULL, "vlcd");
@@ -146,17 +119,8 @@ static int boxer_panel_probe(struct omap_dss_device *dssdev)
 		goto err;
 	}
 
-	/* experimental setup - panel_config structure might be
-	 * further changed internally if needed*/
-	panel_config = &panel_configs[0];
-
-	dssdev->panel.width_in_um = panel_config->width_in_um;
-	dssdev->panel.height_in_um = panel_config->height_in_um;
-
 	printk(KERN_INFO " boxer : %s called , line %d\n", __FUNCTION__ , __LINE__);
-	dssdev->panel.config	= OMAP_DSS_LCD_TFT | OMAP_DSS_LCD_IVS |
-				  OMAP_DSS_LCD_IHS | OMAP_DSS_LCD_IPC;
-	dssdev->panel.timings	= boxer_panel_timings;
+
 err:
 	return ret;
 }
