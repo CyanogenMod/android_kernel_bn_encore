@@ -38,6 +38,7 @@
 #include "sdram-hynix-h8mbx00u0mer-0em.h"
 #include "omap_ion.h"
 #include "omap_ram_console.h"
+#include "omap2plus-cpufreq.h"
 #include "timer-gp.h"
 
 #define ZOOM3_EHCI_RESET_GPIO		64
@@ -201,9 +202,20 @@ static int __init encore_wifi_init(void)
 }
 device_initcall(encore_wifi_init);
 
+static struct omap_cpufreq_platform_data cpufreq_pdata = {
+#ifdef CONFIG_ENCORE_MPU_STOCK
+	.max_nominal_freq = 800000,
+#else
+	.max_nominal_freq = 1000000,
+#endif
+};
+
 static void __init omap_encore_init(void)
 {
 	omap3_mux_init(board_mux, OMAP_PACKAGE_CBP);
+
+	/* Clamp CPU to max nominal clock frequency */
+	omap_cpufreq_set_platform_data(&cpufreq_pdata);
 
 	encore_peripherals_init();
 	encore_display_init();
