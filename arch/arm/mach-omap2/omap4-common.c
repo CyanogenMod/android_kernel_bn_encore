@@ -233,10 +233,16 @@ static int __init omap_l2_cache_init(void)
 	 */
 	if (omap_rev() == OMAP4460_REV_ES1_0) {
 		lockdown = 0xa5a5;
-		writel_relaxed(lockdown, l2cache_base + L2X0_LOCKDOWN_WAY_D0);
-		writel_relaxed(lockdown, l2cache_base + L2X0_LOCKDOWN_WAY_D1);
-		writel_relaxed(lockdown, l2cache_base + L2X0_LOCKDOWN_WAY_I0);
-		writel_relaxed(lockdown, l2cache_base + L2X0_LOCKDOWN_WAY_I1);
+		writel_relaxed(lockdown,
+				l2cache_base + L2X0_LOCKDOWN_WAY_D_BASE);
+		writel_relaxed(lockdown,
+				l2cache_base + L2X0_LOCKDOWN_WAY_D_BASE +
+				L2X0_LOCKDOWN_STRIDE);
+		writel_relaxed(lockdown,
+				l2cache_base + L2X0_LOCKDOWN_WAY_I_BASE);
+		writel_relaxed(lockdown,
+				l2cache_base + L2X0_LOCKDOWN_WAY_I_BASE +
+				L2X0_LOCKDOWN_STRIDE);
 	}
 
 skip_aux_por_api:
