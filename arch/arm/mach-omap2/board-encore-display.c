@@ -121,13 +121,39 @@ static struct omap_dss_device evt_lcd_device = {
 		.timings = {
 			.x_res		= 1024,
 			.y_res		= 600,
+
+#ifdef CONFIG_ENCORE_DEFAULT_REFRESH_54HZ
+			/* 1024x600@54Hz w/ 4 FCLK/PCLK allowed */
+			.pixel_clock	= 43200, /* in kHz */
+			.hfp		= 64,	/* horiz. "front porch" */
+			.hsw		= 30,	/* horiz. sync pulse width */
+			.hbp		= 132,	/* horiz. "back porch" */
+			.vfp		= 12,	/* vert. "front porch" */
+			.vsw		= 8,	/* vert. sync pulse width */
+			.vbp		= 20,	/* vert. "back porch" */
+#endif
+
+#ifdef CONFIG_ENCORE_DEFAULT_REFRESH_60HZ
+			/* 1024x600@60Hz w/ 4 FCLK/PCLK allowed */
+			.pixel_clock	= 43200, /* in kHz */
+			.hfp		= 34,	/* horiz. "front porch" */
+			.hsw		= 18,	/* horiz. sync pulse width */
+			.hbp		= 49,	/* horiz. "back porch" */
+			.vfp		= 12,	/* vert. "front porch" */
+			.vsw		= 8,	/* vert. sync pulse width */
+			.vbp		= 20,	/* vert. "back porch" */
+#endif
+
+#ifdef CONFIG_ENCORE_DEFAULT_REFRESH_90HZ
+			/* 1024x600@90Hz */
 			.pixel_clock	= 72000, /* in kHz */
-			.hfp		= 48,	/* horiz. "front porch" */
-			.hsw		= 48,	/* horiz. sync pulse width */
-			.hbp		= 130,	/* horiz. "back porch" */
-			.vfp		= 8,	/* vert. "front porch" */
-			.vsw		= 20,	/* vert. sync pulse width */
-			.vbp		= 12,	/* vert. "back porch" */
+			.hfp		= 84,	/* horiz. "front porch" */
+			.hsw		= 36,	/* horiz. sync pulse width */
+			.hbp		= 106,	/* horiz. "back porch" */
+			.vfp		= 12,	/* vert. "front porch" */
+			.vsw		= 8,	/* vert. sync pulse width */
+			.vbp		= 20,	/* vert. "back porch" */
+#endif
 		},
 	},
 };

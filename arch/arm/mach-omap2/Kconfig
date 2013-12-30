@@ -293,6 +293,33 @@ config ENCORE_ORIENTATION_LANDSCAPE
 endchoice
 
 choice
+	prompt "Default refresh rate for Encore screen"
+	default ENCORE_DEFAULT_REFRESH_90HZ
+
+config ENCORE_DEFAULT_REFRESH_54HZ
+	bool "54 Hz"
+	help
+	  Default to 54 Hz refresh rate with timings allowing
+	  CONFIG_OMAP2_DSS_MIN_FCK_PER_PCK=4.  Recommended if you intend to use
+	  DSSCOMP and want working 720p video display.
+
+config ENCORE_DEFAULT_REFRESH_60HZ
+	bool "60 Hz"
+	help
+	  Default to 60 Hz refresh rate with timings allowing
+	  CONFIG_OMAP2_DSS_MIN_FCK_PER_PCK=4.  Not recommended due to severe
+	  strobing effects with the backlight.
+
+config ENCORE_DEFAULT_REFRESH_90HZ
+	bool "90 Hz"
+	help
+	  Default to 90 Hz refresh rate with timings allowing
+	  CONFIG_OMAP2_DSS_MIN_FCK_PER_PCK=2.  Recommended if not using
+	  DSSCOMP.
+
+endchoice
+
+choice
 	prompt "MPU clock speed for Encore"
 	default ENCORE_MPU_1000MHZ
 
